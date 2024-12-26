@@ -1,0 +1,196 @@
+<div class="scrollbar fixed top-[5.4rem] left-1/2 transform translate-x-[-50%] h-[calc(100vh-5*1vh-2rem)] w-[100%] 
+md:w-[38rem] bg-white rounded-[1rem] border border-[#ccc] overflow-y-auto overflow-x-hidden">
+  <div class="info flex justify-between">
+    <div class="username p-5">
+      <h1 class="text-2xl font-bold">{{currentUser.username}}</h1>
+      <p class="mb-6 text-sm text-gray-500">{{currentUser.bio}}</p>
+      <p class="text-sm text-gray-400 lg:hover:underline cursor-pointer" id="follower-button">{{follower.length}} followers</p>
+      <p class="text-sm text-gray-400 lg:hover:underline cursor-pointer" id="following-button">{{following.length}} followings</p>
+    </div>
+    <div class="avatar p-5">
+      <img src="{{currentUser.profile_picture}}" alt="Avatar"
+        class="w-24 h-24 rounded-full object-cover border border-gray-300">
+    </div>
+  </div>
+
+  <div class="px-4 grid grid-cols-2 gap-4">
+    {{#if isCurrentUser}}
+    <!-- If it's the current user, show the Edit button -->
+    <button
+      class="about-button col-span-2 px-4 py-2 text-black bg-white border border-black transition ease-in-out duration-300 rounded-xl hover:bg-black hover:text-white"
+      user-id="{{currentUser.id}}">
+      Edit
+    </button>
+    {{else}}
+    <!-- If not the current user, show Follow and About buttons -->
+      {{#if isFollowed}}
+        <button
+          class="px-4 py-2 text-black bg-white border border-black transition ease-in-out duration-300 rounded-xl hover:bg-black hover:text-white follow-button"
+          data-user-id="{{currentUser.id}}">
+          Unfollow
+        </button>
+      {{else}}
+        <button
+          class="px-4 py-2 text-black bg-white border border-black transition ease-in-out duration-300 rounded-xl hover:bg-black hover:text-white follow-button"
+          data-user-id="{{currentUser.id}}">
+          Follow
+        </button>
+      {{/if}}
+    <button
+      class="about-button px-4 py-2 text-black bg-white border border-black transition ease-in-out duration-300 rounded-xl hover:bg-black hover:text-white"
+      user-id="{{currentUser.id}}">
+      About
+    </button>
+    {{/if}}
+  </div>
+
+  
+  <div class="w-full pt-5 flex justify-center">
+    <p id="postTab" class="px-6 pb-3 flex flex-1 justify-center items-center border-b border-gray-400 text-gray-400 hover:border-black hover:text-black cursor-pointer">
+      Posts</p>
+    <p id="repostTab" class="px-6 py-3 flex flex-1 justify-center items-center border-b border-gray-400 text-gray-400 hover:border-black hover:text-black cursor-pointer">
+      Repost</p>
+  </div>
+
+  <div id="post" class="tab-content hidden">
+    {{#each threads}}
+    <div class="block border-t border-[#ccc] pt-[1rem] px-[1rem]">
+      <div class="flex gap-[1rem] text-black">
+        <a href="/Profile/{{User.id}}" class="m-0 p-0">
+          <img src="{{User.profile_picture}}"
+            class="min-w-[2.5rem] min-h-[2.5rem] max-w-[2.5rem] max-h-[2.5rem] rounded-[50%] overflow-hidden" />
+        </a>
+
+        <div class="flex justify-between min-w-[85%]">
+          <div class="flex gap-[1rem]">
+            <div class="flex flex-col gap-[.5rem]">
+              <div class="ingo inline-flex gap-[10px] text-[.8rem]">
+                <h3>{{User.username}}</h3>
+                <h3 class="text-[#ccc]">{{timeAgo createdAt}}</h3>
+              </div>
+              <a href="/Homepage/{{id}}">
+                <div class="content pb-1">
+                  {{{content}}}
+                </div>
+
+                {{#each Media}}
+                <div class="photo">
+                  <img src="{{mediaUrl}}" class="w-full max-w-[100%] h-auto object-cover" />
+                </div>
+                {{/each}}
+              </a>
+            </div>
+          </div>
+        </div>
+        <span class="edit">
+          <i class="fa-solid fa-ellipsis"></i>
+        </span>
+      </div>
+
+      <div class=" py-[.8rem] px-[3.7rem] flex gap-[1.5rem] items-center">
+        {{#if this.isLiked}}
+        <span class="actionbutton like-button relative" data-post-id = "{{this.id}}" button-id = "unlike">
+          <i class="fa-solid fa-heart "></i>
+        </span>
+        {{else}}
+        <span class="actionbutton like-button relative" data-post-id = "{{this.id}}" button-id = "like">
+          <i class="fa-regular fa-heart "></i>
+        </span>
+        {{/if}}
+        <span class="actionbutton comment-button relative" data-post-id="{{this.id}}">
+          <i class="fa-regular fa-comment"></i>
+        </span>
+        <span class="actionbutton retweet-button relative" data-post-id="{{this.id}}">
+          <i class="las la-retweet"></i>
+        </span>
+        <span class="actionbutton share-button relative">
+          <i class="fa-solid fa-share"></i>
+        </span>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+
+  <div id="repost" class="tab-content hidden">
+    {{#each reposts}}
+    <div class="block border-t border-[#ccc] py-[1rem] px-[1rem]">
+      <div class="flex gap-[1rem] text-black">
+        <a href="/Profile/{{Thread.User.id}}" class="m-0 p-0">
+          <img src="{{Thread.User.profile_picture}}"
+            class="min-w-[2.5rem] min-h-[2.5rem] max-w-[2.5rem] max-h-[2.5rem] rounded-[50%] overflow-hidden" />
+        </a>
+
+        <div class="flex justify-between min-w-[85%]">
+          <div class="flex gap-[1rem]">
+            <div class="flex flex-col gap-[.5rem]">
+              <div class="ingo inline-flex gap-[10px] text-[.8rem]">
+                <h3>{{Thread.User.username}}</h3>
+                <h3 class="text-[#ccc]">{{timeAgo Thread.createdAt}}</h3>
+              </div>
+              <a href="/Homepage/{{Thread.id}}">
+                <div class="content pb-1">
+                  {{Thread.content}}
+                </div>
+
+                {{#each Thread.Media}}
+                <div class="photo">
+                  <img src="{{mediaUrl}}" class="w-full max-w-[100%] h-auto object-cover" />
+                </div>
+                {{/each}}
+              </a>
+            </div>
+          </div>
+        </div>
+        <span class="edit">
+          <i class="fa-solid fa-ellipsis"></i>
+        </span>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+
+</div>
+
+
+<script>
+ function showTab(tab) {
+      // Hide all tab contents
+      document.querySelectorAll('.tab-content').forEach(tabContent => {
+          tabContent.classList.add('hidden');
+      });
+      
+      // Show the selected tab content
+      document.getElementById(tab).classList.remove('hidden');
+      
+      // Remove the active class from all tabs
+      document.querySelectorAll('p').forEach(tabItem => {
+          tabItem.classList.remove('border-black', 'text-black');
+          tabItem.classList.add('border-gray-400', 'text-gray-400');
+      });
+      
+      // Add active styles to the clicked tab
+      document.getElementById(tab + 'Tab').classList.remove('border-gray-400', 'text-gray-400');
+      document.getElementById(tab + 'Tab').classList.add('border-black', 'text-black');
+  }
+
+      // Add event listeners for the tabs
+    document.getElementById('postTab').addEventListener('click', function() {
+        showTab('post');
+    });
+
+    document.getElementById('repostTab').addEventListener('click', function() {
+        showTab('repost');
+    });
+
+  // Show the "Post" tab by default
+  showTab('post');
+  document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const activeTab = urlParams.get('tab');
+
+    if (activeTab === 'repost') {
+        // Switch to the Repost tab
+        showTab('repost');
+    }
+});
+</script>
